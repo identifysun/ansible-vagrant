@@ -1,0 +1,9 @@
+---
+# defaults file for ca
+dnsname: your.dns.name
+tmppath: "/tmp"
+crtpath: "{{ tmppath }}/{{ dnsname }}.pem"
+pempath: "{{ tmppath }}/{{ dnsname }}-key.pem"
+csrpath: "{{ tmppath }}/{{ dnsname }}.csr"
+pfxpath: "{{ tmppath }}/{{ dnsname }}.pfx"
+private_key_password: ""

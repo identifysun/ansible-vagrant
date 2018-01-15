@@ -1,0 +1,15 @@
+---
+# This playbook deploys the whole application stack in this site.
+- name: kubernetes
+  hosts: kubernetes
+  user: vagrant
+  become: true
+  gather_facts: no
+  tags:
+    - kubernetes
+  roles:
+    - kubernetes
+    # - kubernetes-master
+    # - haproxy
+    # - keepalived
+    # - kubernetes-node

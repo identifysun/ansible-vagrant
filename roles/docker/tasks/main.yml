@@ -1,0 +1,53 @@
+---
+- name: copy docker 
+  copy:
+    src: "{{ docker_version }}/{{ item }}"
+    dest: "/usr/bin/{{ item }}"
+    mode: 755
+  with_items:
+    - docker-containerd-ctr
+    - docker-init
+    - docker
+    - docker-proxy
+    - docker-runc
+    - docker-containerd-shim
+    - docker-containerd
+    - dockerd
+
+- name: Ensure group "docker" exists
+  group:
+    name: docker
+    state: present
+
+- name: copy docker bash completion
+  copy:
+    src: docker.bash
+    dest: /etc/bash_completion.d/docker
+    mode: 0644
+
+- name: copy docker daemon
+  copy:
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+
+- name: Add the user 'docker' with a specific uid and a primary group of 'admin'
+  user:
+    name: docker
+    group: docker
+    shell: /sbin/nologin
+
+- name: copy docker system unit
+  copy:
+    src: "{{ item }}"
+    dest: "/usr/lib/systemd/system/{{ item }}"
+    mode: 0755
+  with_items:
+    - docker.socket
+    - docker.service
+
+- name: enable and start docker service
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+    daemon_reload: yes

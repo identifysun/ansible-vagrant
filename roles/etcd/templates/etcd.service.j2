@@ -1,0 +1,18 @@
+[Unit]
+Description=etcd
+Documentation=https://github.com/coreos/etcd
+Conflicts=etcd.service
+Conflicts=etcd2.service
+
+[Service]
+Type=notify
+WorkingDirectory={{ etcd_data_dir }}
+ExecStart={{ bin_dir }}/etcd --config-file={{ etcd_config_file }}
+Restart=always
+RestartSec=5s
+LimitNOFILE=40000
+TimeoutStartSec=0
+
+
+[Install]
+WantedBy=multi-user.target

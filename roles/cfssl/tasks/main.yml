@@ -1,0 +1,9 @@
+---
+- name: Copy cfssl command to bin directory
+  copy:
+    src: "{{ binaries_path }}/{{ item }}"
+    dest: "{{ bin_dir }}"
+  with_items:
+    - cfssl
+    - cfssljson
+    - cfssl-certinfo

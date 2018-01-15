@@ -1,0 +1,40 @@
+---
+# https://github.com/hashicorp/vagrant/tree/master/keys
+- name: Create ~/.ssh directory for virtual machine user
+  file: path="{{ item.home }}/.ssh" state=directory mode=0700
+  with_items: "{{ users }}"
+
+- name: Copy vagrant private key to virtual machine user
+  copy:
+    src: "{{ lookup('env','HOME') + '/.vagrant.d/insecure_private_key' }}"
+    dest: "{{ item.home }}/.ssh/id_rsa"
+    owner: "{{ item.user }}"
+    mode: 0600
+  with_items: "{{ users }}"
+
+- name: Set vagrant default authorized key
+  authorized_key: user="{{ item.user }}" state=present key="{{ lookup('file', 'vagrant.pub') }}"
+  with_items: "{{ users }}"
+
+- name: Print all available facts
+  ansible.builtin.debug:
+    var: hostvars['node1'].ansible_facts
+
+# - debug: var=hostvars["node1"]["ansible_facts"]
+
+# - name: Replace a localhost entry with our own
+#   ansible.builtin.lineinfile:
+#     path: /etc/hosts
+#     regexp: '^{{ hostvars[item][\"ansible_facts\"].all_ipv4_addresses }}'
+#     line: "{{ hostvars[item][\"ansible_facts\"].all_ipv4_addresses | difference([\"10.0.2.15\"]) | ansible.utils.ipaddr | first }}  {{ hostvars[host].ansible_fqdn }} {{ hostvars[host].ansible_hostname }}"
+#     state: present
+#   with_items:
+#     - "{{ groups.all }}"
+
+- name: Add all vagrant virtual machine's hostname to /etc/hosts
+  template:
+    src: hosts.j2
+    dest: /etc/hosts
+    owner: root
+    group: root
+    mode: "0644"

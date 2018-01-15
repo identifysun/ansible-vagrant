@@ -1,0 +1,33 @@
+---
+# tasks file for blackbox_exporter
+- name: Install blackbox_exporter package
+  yum:
+    name: "blackbox_exporter-{{ blackbox_exporter_version }}"
+    state: present
+
+- name: Copy blackbox_exporter systemd unit file.
+  copy:
+    src: blackbox_exporter.service
+    dest: /usr/lib/systemd/system/blackbox_exporter.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart blackbox_exporter
+
+- name: Copy blackbox_exporter config file.
+  template:
+    src: etc/blackbox_exporter/blackbox.yml.j2
+    dest: /etc/blackbox_exporter/blackbox.yml
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart blackbox_exporter
+
+- name: Enabled and started blackbox_exporter service
+  systemd:
+    name: blackbox_exporter
+    state: started
+    enabled: yes
+    daemon_reload: yes

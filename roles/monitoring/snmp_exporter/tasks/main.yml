@@ -1,0 +1,33 @@
+---
+# tasks file for snmp_exporter
+- name: Install snmp_exporter package
+  yum:
+    name: "snmp_exporter-{{ snmp_exporter_version }}"
+    state: present
+
+- name: Copy snmp_exporter systemd unit file.
+  copy:
+    src: snmp_exporter.service
+    dest: /usr/lib/systemd/system/snmp_exporter.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart snmp_exporter
+
+- name: Copy snmp_exporter config file.
+  template:
+    src: etc/snmp_exporter/snmp.yml.j2
+    dest: /etc/snmp_exporter/snmp.yml
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart snmp_exporter
+
+- name: Enabled and started snmp_exporter service
+  systemd:
+    name: snmp_exporter
+    state: started
+    enabled: yes
+    daemon_reload: yes

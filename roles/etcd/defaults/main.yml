@@ -1,0 +1,11 @@
+---
+etcd_version: v3.0.17
+etcd_initial_cluster: []
+# https://github.com/coreos/etcd/releases/download/v3.3.4/etcd-v3.3.4-linux-amd64.tar.gz
+etcd_releases_url: https://github.com/coreos/etcd/releases/download/v3.3.4/etcd-v3.3.4-linux-amd64.tar.gz
+
+# etcd_binary_mirrors:
+# etcd_download_center:
+
+etcd_releases_mirrors: https://github.com/coreos/etcd/releases/download/
+etcd_binary_package: "etcd-{{ etcd_version }}-linux-amd64.tar.gz"

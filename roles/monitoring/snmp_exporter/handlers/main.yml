@@ -1,0 +1,4 @@
+---
+# handlers file for snmp_exporter
+- name: Restart snmp_exporter
+  systemd: name=snmp_exporter state=restarted daemon_reload=yes

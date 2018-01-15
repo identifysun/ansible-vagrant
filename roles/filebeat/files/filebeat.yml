@@ -1,0 +1,30 @@
+filebeat.prospectors:
+- type: log
+  paths:
+    - '/var/lib/docker/containers/*/*.log'
+  tags:
+    - nginx
+  fields:
+    environment: development
+  pipeline: 1
+  # json.message_key: log
+  json.keys_under_root: true
+  processors:
+    - add_docker_metadata: ~
+
+- type: log
+  paths:
+    - /vagrant/*.log
+  tags:
+    - application
+  fields:
+    environment: development
+  pipeline: 2
+  multiline:
+    pattern: '^\['
+    negate: true
+    match: after
+
+output.logstash:
+  # The Logstash hosts
+  hosts: ["localhost:5044"]

@@ -1,0 +1,23 @@
+---
+# tasks file for node_exporter
+- name: Install node_exporter package
+  yum:
+    name: "node_exporter-{{ node_exporter_version }}"
+    state: present
+
+- name: Copy node_exporter systemd unit file.
+  copy:
+    src: node_exporter.service
+    dest: /usr/lib/systemd/system/node_exporter.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart node_exporter
+
+- name: Enabled and started node_exporter service
+  systemd:
+    name: node_exporter
+    state: started
+    enabled: yes
+    daemon_reload: yes

@@ -1,0 +1,75 @@
+---
+- name: Unarchive a file that needs to be downloaded (added in 2.0)
+  unarchive:
+    src: "{{ kubernetes_binaries_mirrors }}/{{ etcd_version }}/{{ item }}"
+    dest: "{{ kubernetes_binaries_path }}"
+    creates: "{{ kubernetes_binaries_path }}/kubernetes"
+    remote_src: yes
+  with_items:
+    - "{{ etcd_binarie_package }}"
+  when: "'etcd' in group_names"
+
+
+
+
+- name: install etcd
+  copy:
+    src: "{{ item }}"
+    dest: "/usr/bin/{{ item }}"
+    mode: 755
+  with_items:
+    - etcd
+    - etcdctl
+
+- name: create etcd config directory
+  file:
+    path: /etc/etcd
+    state: directory
+    mode: 0755
+
+- name: etcd hosts odd number check
+  fail:
+    msg: "The system may not be provisioned according to the etcd hosts number, please provide odd host."
+  when: groups['etcd']|length % 2 == 0
+
+- name: register
+  set_fact:
+    etcd_initial_cluster: "{{ etcd_initial_cluster }} + [ '{{ item }}=http://{{ hostvars[item].ansible_eth1.ipv4.address }}:2380' ]"
+  with_items: "{{ groups['etcd'] }}"
+
+- name: debug etcd_initial_cluster variable
+  debug:
+    var: etcd_initial_cluster
+  when: debug == true
+
+- name: copy etcd config file to /etc/etcd/etcd.conf
+  template:
+    src: etcd.conf.j2
+    dest: /etc/etcd/etcd.conf
+  notify:
+    - restart etcd
+
+- name: copy etcd systemd service unit
+  copy:
+    src: etcd.service
+    dest: "/usr/lib/systemd/system/etcd.service"
+
+- name: enable and start etcd service
+  systemd:
+    state: started
+    daemon_reload: yes
+    enabled: yes
+    name: etcd
+
+
+
+# - name: install etcd
+#   yum:
+#     name: etcd
+#     state: present
+
+
+
+# - name: debug
+#   debug:
+#     var: groups

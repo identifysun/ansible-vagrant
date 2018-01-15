@@ -1,0 +1,49 @@
+---
+- name: Prometheus monitoring
+  hosts: prometheus
+  become: true
+  user: vagrant
+  tags:
+    - prometheus
+    - alertmanager
+    - blackbox
+    - pushgateway
+    - snmp_exporter
+  roles:
+    - monitoring/prometheus
+    - monitoring/alertmanager
+    - monitoring/blackbox_exporter
+    - monitoring/pushgateway
+    - monitoring/snmp_exporter
+    - monitoring/grafana
+
+- name: node monitoring
+  hosts: all
+  become: true
+  user: vagrant
+  tags:
+    - node
+    - node_exporter
+  roles:
+    - monitoring/node_exporter
+
+- name: Mysqld monitoring
+  hosts: mysqld
+  become: true
+  user: vagrant
+  tags:
+    - mysql
+    - mysqld
+    - mysqld_exporter
+  roles:
+    - monitoring/mysqld_exporter
+
+- name: Redis monitoring
+  hosts: mysqld
+  become: true
+  user: vagrant
+  tags:
+    - redis
+    - redis_exporter
+  roles:
+    - monitoring/redis_exporter

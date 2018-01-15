@@ -1,0 +1,13 @@
+[Unit]
+Description=Mysql Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=mysqld_exporter
+Group=mysqld_exporter
+ExecStart=/usr/bin/mysqld_exporter
+
+[Install]
+WantedBy=multi-user.target

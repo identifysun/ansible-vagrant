@@ -1,0 +1,7 @@
+---
+- name: create directory
+  file:
+    path: "{{ kubernetes_binaries_path }}"
+    state: directory
+    recurse: yes
+    mode: 0755

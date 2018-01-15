@@ -1,0 +1,11 @@
+---
+# This playbook deploys the whole application stack in this site.
+- name: vagrant
+  hosts: all
+  become: true
+  user: vagrant
+  gather_facts: yes
+  roles:
+    - vagrant
+    - common
+    - ntp

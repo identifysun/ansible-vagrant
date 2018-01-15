@@ -1,0 +1,23 @@
+---
+# tasks file for pushgateway
+- name: Install pushgateway package
+  yum:
+    name: "pushgateway-{{ pushgateway_version }}"
+    state: present
+
+- name: Copy pushgateway systemd unit file.
+  copy:
+    src: pushgateway.service
+    dest: /usr/lib/systemd/system/pushgateway.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart pushgateway
+
+- name: Enabled and started pushgateway service
+  systemd:
+    name: pushgateway
+    state: started
+    enabled: yes
+    daemon_reload: yes

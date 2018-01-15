@@ -1,0 +1,2 @@
+# custom pattern
+JAVAMESSAGE (.+\n?)+

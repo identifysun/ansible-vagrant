@@ -1,0 +1,46 @@
+    authorityKeyIdentifier=keyid,issuer
+    basicConstraints=CA:FALSE
+    keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+    extendedKeyUsage = serverAuth
+    subjectAltName = @alt_names
+
+    [alt_names]
+    DNS.1=harbor.example.com
+    DNS.2=harbor
+    EOF
+
+    openssl x509 -req -sha512 -days 3650         -extfile v3.ext         -CA example-ca.crt -CAkey example-ca.key -CAcreateserial         -in harbor.example.com.csr         -out harbor.example.com.crt
+}
+
+function update_hosts() {
+    ipaddr=192.168.33.11
+    echo "   harbor harbor.example.com" >> /etc/hosts
+}
+
+
+cd /opt
+generate_cacerticate
+
+
+
+
+
+# wget https://github.com/goharbor/harbor/releases/download/v2.5.1/harbor-offline-installer-v2.5.1.tgz
+# mv harbor-offline-installer-v2.5.1.tgz /opt
+# tar -xvf harbor-offline-installer-v2.5.1.tgz /opt/harbor
+
+
+
+# cp -i harbor.yml.tmpl harbor.yml
+
+# ./install.sh --with-notary --with-trivy --with-chartmuseum
+
+
+
+
+# cp example-ca.crt /etc/pki/ca-trust/source/anchors
+# update-ca-trust extract
+
+
+
+

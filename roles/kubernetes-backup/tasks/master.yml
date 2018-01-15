@@ -1,0 +1,104 @@
+---
+# - name: Download master file
+#   get_url:
+#     url: "{{ kubernetes_binaries_mirrors }}/{{ kubernetes_version }}/{{ item }}"
+#     dest: "{{ kubernetes_binaries_path }}/{{ item }}"
+#   with_items:
+#     - "{{ kubernetes_server_binaries }}"
+#   when: "'master' in group_names"
+
+# - name: Extract foo.tgz into /var/lib/foo
+#   unarchive:
+#     src: "{{ kubernetes_binaries_path }}/{{ kubernetes_server_binaries }}"
+#     dest: "{{ kubernetes_binaries_path }}"
+
+- name: Unarchive a file that needs to be downloaded (added in 2.0)
+  unarchive:
+    src: "{{ kubernetes_binaries_mirrors }}/{{ kubernetes_version }}/{{ item }}"
+    dest: "{{ kubernetes_binaries_path }}"
+    creates: "{{ kubernetes_binaries_path }}/kubernetes"
+    remote_src: yes
+  with_items:
+    - "{{ kubernetes_server_binaries }}"
+  when: "'master' in group_names"
+
+- name: Copy a "sudoers" file on the remote machine for editing
+  copy:
+    src: "{{ kubernetes_binaries_path }}/kubernetes/server/bin/{{ item }}"
+    dest: "/usr/bin/{{ item }}"
+    mode: 0755
+    remote_src: yes
+  with_items:
+    - kube-controller-manager
+    - kube-scheduler
+    - kube-apiserver
+    - kubectl
+
+- name: copy kubernetes systemd unit
+  copy:
+    src: "systemd/{{ item }}"
+    dest: "/usr/lib/systemd/system/{{ item }}"
+    mode: 0644
+  with_items:
+    - kube-apiserver.service
+    - kube-controller-manager.service
+    - kube-scheduler.service
+
+- name: copy sysconfig
+  copy:
+    src: "sysconfig/{{ item }}"
+    dest: "/etc/sysconfig/{{ item }}"
+    mode: 0644
+  with_items:
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler
+  notify:
+    - restart kube-apiserver
+    - restart kube-controller-manager
+    - restart kube-scheduler
+
+- name: create kubernetes log directory
+  file:
+    path: /var/log/kubernetes
+    state: directory
+    mode: 0755
+
+- name: enable and start kubernetes service
+  systemd:
+    name: "{{ item }}"
+    state: started
+    # state: restarted
+    enabled: yes
+    daemon_reload: yes
+  with_items:
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler
+
+
+
+
+
+
+- fail: msg="The system may not be provisioned according to the CMDB status."
+
+# - name: copy kubernetes bin
+#   copy:
+#     src: "{{ kubernetes_version }}/{{ item }}"
+#     dest: "/usr/bin/{{ item }}"
+#     mode: 0755
+#   with_items:
+#     - kube-aggregator
+#     - mounter
+#     - apiextensions-apiserver
+#     - hyperkube
+#     - kube-controller-manager
+#     - kube-scheduler
+#     - cloud-controller-manager
+#     - kubeadm
+#     - kubelet
+#     - kube-proxy
+#     - kube-apiserver
+#     - kubectl
+

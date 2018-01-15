@@ -1,0 +1,4 @@
+---
+# handlers file for alertmanager
+- name: Restart alertmanager
+  systemd: name=alertmanager state=restarted daemon_reload=yes

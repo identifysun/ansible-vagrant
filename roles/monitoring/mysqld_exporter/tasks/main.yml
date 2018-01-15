@@ -1,0 +1,23 @@
+---
+# tasks file for mysqld_exporter
+- name: Install mysqld_exporter package
+  yum:
+    name: "mysqld_exporter-{{ mysqld_exporter_version }}"
+    state: present
+
+- name: Copy mysqld_exporter systemd unit file.
+  copy:
+    src: mysqld_exporter.service
+    dest: /usr/lib/systemd/system/mysqld_exporter.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart mysqld_exporter
+
+- name: Enabled and started mysqld_exporter service
+  systemd:
+    name: mysqld_exporter
+    state: started
+    enabled: yes
+    daemon_reload: yes

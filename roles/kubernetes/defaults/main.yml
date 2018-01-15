@@ -1,0 +1,7 @@
+---
+kubernetes_version: v1.8.12
+kubernetes_binaries_mirrors: https://dl.k8s.io
+kubernetes_binaries_path: "/usr/local/src/kubernetes/{{ kubernetes_version }}"
+kubernetes_client_binaries: "kubernetes-client-linux-amd64.tar.gz"
+kubernetes_server_binaries: "kubernetes-server-linux-amd64.tar.gz"
+kubernetes_node_binaries: "kubernetes-node-linux-amd64.tar.gz"

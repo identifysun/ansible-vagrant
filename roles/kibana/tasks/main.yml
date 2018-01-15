@@ -1,0 +1,22 @@
+---
+- name: install kibana
+  yum:
+    name: kibana
+    state: present
+  tags:
+    - install
+
+- name: copy config file (kibana.yml) for kibana
+  copy: 
+    src: kibana.yml
+    dest: /etc/kibana/kibana.yml
+    owner: kibana
+    group: kibana
+    mode: 0600
+  notify:
+    - restart kibana
+  tags:
+    - config
+
+- name: start kibana service
+  service: name=kibana state=started enabled=yes

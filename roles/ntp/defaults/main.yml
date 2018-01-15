@@ -1,0 +1,11 @@
+---
+timezone: Asia/Shanghai
+
+# NTP server area configuration (leave empty for 'Worldwide').
+# See: http://support.ntp.org/bin/view/Servers/NTPPoolServers
+ntp_area: 'asia'
+ntp_servers:
+  - "0.{{ ntp_area }}.pool.ntp.org"
+  - "1.{{ ntp_area }}.pool.ntp.org"
+  - "2.{{ ntp_area }}.pool.ntp.org"
+  - "3.{{ ntp_area }}.pool.ntp.org"

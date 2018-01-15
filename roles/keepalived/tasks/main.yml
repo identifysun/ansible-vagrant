@@ -1,0 +1,26 @@
+---
+- name: install keepalived
+  yum:
+    name: keepalived
+    state: present
+
+- name: allow haproxy to bind to the shared ip address
+  sysctl:
+    name: net.ipv4.ip_nonlocal_bind
+    value: 1
+    state: present
+
+- name: copy keepalived config
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    mode: 0644
+  notify:
+    - restart keepalived
+
+- name: enable and start keepalived service
+  systemd:
+    name: keepalived
+    state: started
+    enabled: yes
+    daemon_reload: yes

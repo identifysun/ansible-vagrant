@@ -1,0 +1,8 @@
+---
+## CentOS/RHEL specific variables
+# CentOS/EPEL mirror
+mirror_baseurl: "http://mirror.centos.org"
+# Install epel repo on Centos/RHEL
+centos_epel_enabled: false
+# Use the fastestmirror yum plugin
+centos_fastestmirror_enabled: false

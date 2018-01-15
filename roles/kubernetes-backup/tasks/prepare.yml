@@ -1,0 +1,12 @@
+---
+- debug: var=debug
+
+- name: replace nginx root
+  replace:
+    path: /etc/nginx/nginx.conf
+    regexp: 'root         /usr/share/nginx/html;'
+    replace: 'root         /vagrant/v1.8.12/;'
+    backup: yes
+  delegate_to: "{{ groups['master'][0] }}"
+  when: inventory_hostname == groups['master'][0]
+

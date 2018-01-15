@@ -1,0 +1,6 @@
+---
+# defaults file for prometheus
+prometheus_version: 2.23.0-1
+
+prometheus_config_dir: /etc/prometheus
+prometheus_data_dir: /var/lib/prometheus

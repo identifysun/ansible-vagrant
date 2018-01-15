@@ -1,0 +1,19 @@
+apiVersion: kubeadm.k8s.io/v1alpha2
+kind: MasterConfiguration
+api:
+  advertiseAddress: 10.10.10.10
+# imageRepository: k8s.gcr.io
+imageRepository: registry.cn-hangzhou.aliyuncs.com/google_containers
+kubernetesVersion: v1.11.2
+networking:
+  dnsDomain: cluster.local
+  podSubnet: 10.244.0.0/16
+  serviceSubnet: 10.96.0.0/12
+# kubeProxy:
+#   config:
+#     # k8s 1.9开始kube-proxy的ipvs进入beta，替代iptables方式路由service
+#     mode: ipvs
+# etcd:
+#   local:
+#     dataDir: /var/lib/etcd
+#     image: "docker.io/gcrio/etcd:3.1.11"

@@ -1,0 +1,33 @@
+---
+# tasks file for prometheus
+- name: Install prometheus package
+  yum:
+    name: "prometheus-{{ prometheus_version }}"
+    state: present
+
+- name: Copy prometheus systemd unit file.
+  copy:
+    src: prometheus.service
+    dest: /usr/lib/systemd/system/prometheus.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart prometheus
+
+- name: Copy prometheus config file.
+  template:
+    src: etc/prometheus/prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart prometheus
+
+- name: Enabled and started prometheus service
+  systemd:
+    name: prometheus
+    state: started
+    enabled: yes
+    daemon_reload: yes

@@ -1,0 +1,2 @@
+# --api-servers=http://localhost:8080
+KUBELET_ARGS="--kubeconfig=/etc/kubernetes/kubelet.kubeconfig --hostname-override={{ ansible_hostname }} --logtostderr=false --log-dir=/var/log/kubernetes --v=2"

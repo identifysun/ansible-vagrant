@@ -1,0 +1,57 @@
+---
+- name: Download file
+  get_url:
+    url: "{{ kubernetes_binaries_mirrors }}/{{ kubernetes_version }}/{{ item }}"
+    dest: "{{ kubernetes_binaries_path }}/{{ item }}"
+  with_items:
+    - "{{ kubernetes_node_binaries }}"
+  when: "'node' in group_names"
+
+# - name: copy kubernetes bin
+#   copy:
+#     src: "{{ kubernetes_version }}/{{ item }}"
+#     dest: "/usr/bin/{{ item }}"
+#     mode: 0755
+#   with_items:
+#     - kubeadm
+#     - kubelet
+#     - kube-proxy
+#     - kubectl
+
+- name: copy kubernetes systemd unit
+  copy:
+    src: "systemd/{{ item }}"
+    dest: "/usr/lib/systemd/system/{{ item }}"
+    mode: 0644
+  with_items:
+    - kubelet.service
+    - kube-proxy.service
+
+- name: copy sysconfig
+  template:
+    src: "sysconfig/{{ item }}.j2"
+    dest: "/etc/sysconfig/{{ item }}"
+    mode: 0644
+  with_items:
+    - kubelet
+    - kube-proxy
+
+- name: create kubernetes log directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - /var/log/kubernetes
+    - /var/lib/kubelet
+
+- name: enable and start kubernetes service
+  systemd:
+    name: "{{ item }}"
+    state: started
+    # state: restarted
+    enabled: yes
+    daemon_reload: yes
+  with_items:
+    - kubelet
+    - kube-proxy

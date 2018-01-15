@@ -1,0 +1,20 @@
+---
+- name: install filebeat on guest os
+  yum:
+    name: filebeat
+    state: present
+  tags:
+    - install
+
+- name: copy config file (filebeat.yml) for filebeat
+  copy: 
+    src: filebeat.yml
+    dest: /etc/filebeat/filebeat.yml 
+    mode: 0600
+  notify:
+    - restart filebeat
+  tags:
+    - config
+
+- name: start filebeat service
+  service: name=filebeat state=started enabled=yes

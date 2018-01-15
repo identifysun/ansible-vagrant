@@ -1,0 +1,13 @@
+{
+  "debug": false,
+  "exec-opts": [
+    "native.cgroupdriver={{ docker_cgroup_driver }}"
+  ],
+  "data-root": "{{ docker_data_dir }}",
+  "insecure-registries": {{ insecure_registries | to_nice_json }},
+  "registry-mirrors": {{ registry_mirrors | to_nice_json }},
+  "log-driver": "{{ docker_log_driver }}",
+  "log-opts": {{ docker_log_opts | to_nice_json }},
+  "storage-driver": "{{ docker_storage_driver }}",
+  "storage-opts": {{ docker_storage_opts|replace("'",'"') }}
+}

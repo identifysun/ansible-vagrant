@@ -1,0 +1,6 @@
+---
+debug: false
+
+mirror_baseurl: "https://mirrors.aliyun.com"
+ansible_default_ipv4:
+  interface: eth1

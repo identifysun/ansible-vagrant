@@ -1,0 +1,50 @@
+---
+- name: add elastic repository
+  include: install_elastic_repo.yml
+  tags:
+    - elastic
+    - repository
+
+- name: install elasticsearch on guest os
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - java-1.8.0-openjdk
+    - elasticsearch
+  tags:
+    - install
+
+- name: copy config file (elasticsearch.yml) for filebeat
+  template:
+    src: elasticsearch.yml.j2
+    dest: /etc/elasticsearch/elasticsearch.yml
+    owner: elasticsearch
+    group: elasticsearch
+  notify:
+    - restart elasticsearch
+  tags:
+    - config
+
+- name: jvm.options configuration
+  copy:
+    src: jvm.options
+    dest: /etc/elasticsearch/jvm.options
+    owner: elasticsearch
+    group: elasticsearch
+  notify:
+    - restart elasticsearch
+  tags: elasticsearch
+
+- name: log4j2.properties configuration
+  copy:
+    src: log4j2.properties
+    dest: /etc/elasticsearch/log4j2.properties
+    owner: elasticsearch
+    group: elasticsearch
+  notify:
+    - restart elasticsearch
+  tags: elasticsearch
+
+- name: start elasticsearch service
+  service: name=elasticsearch state=started enabled=yes

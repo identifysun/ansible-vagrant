@@ -1,0 +1,24 @@
+---
+- name: Include a variable file based on the OS type
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Install ntp packages
+  package:
+    name: ntp
+    state: present
+
+- name: Set timezone to {{ timezone }}
+  timezone:
+    name: "{{ timezone }}"
+
+- name: Copy ntp.conf configuration files
+  template:
+    src: ntp.conf.j2
+    dest: /etc/ntp.conf
+  notify: restart ntpd
+
+- name: Enable and running {{ ntp_service_name }} service
+  service:
+    name: "{{ ntp_service_name }}"
+    state: started
+    enabled: yes

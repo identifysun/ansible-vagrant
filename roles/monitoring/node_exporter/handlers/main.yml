@@ -1,0 +1,4 @@
+---
+# handlers file for node_exporter
+- name: Restart node_exporter
+  systemd: name=node_exporter state=restarted daemon_reload=yes

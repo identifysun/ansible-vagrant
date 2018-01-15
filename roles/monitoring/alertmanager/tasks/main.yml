@@ -1,0 +1,33 @@
+---
+# tasks file for alertmanager
+- name: Install alertmanager package
+  yum:
+    name: "alertmanager-{{ alertmanager_version }}"
+    state: present
+
+- name: Copy alertmanager systemd unit file.
+  copy:
+    src: alertmanager.service
+    dest: /usr/lib/systemd/system/alertmanager.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart alertmanager
+
+- name: Copy alertmanager config file.
+  template:
+    src: etc/alertmanager/alertmanager.yml.j2
+    dest: /etc/alertmanager/alertmanager.yml
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart alertmanager
+
+- name: Enabled and started alertmanager service
+  systemd:
+    name: alertmanager
+    state: started
+    enabled: yes
+    daemon_reload: yes

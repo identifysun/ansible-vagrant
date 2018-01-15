@@ -1,0 +1,15 @@
+---
+- name: add prepared statements
+  include_tasks: prepare.yml
+  when: debug
+
+- name: include common
+  include_tasks: common.yml
+
+- name: include master
+  include_tasks: master.yml
+  when: "'master' in group_names"
+
+- name: include node
+  include_tasks: node.yml
+  when: "'node' in group_names"

@@ -1,0 +1,8 @@
+---
+# defaults file for splunk_universal_forwarder
+splunk_universal_forwarder_version: 8.1.1
+
+# Splunk universal forwarder default user and password
+splunk_forwarder_user: splunk
+splunk_forwarder_password: splunkforwarder
+

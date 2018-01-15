@@ -1,0 +1,19 @@
+---
+# tasks file for splunk_universal_forwarder
+- name: Install splunk-universal-forwarder package
+  yum:
+    name: "nginx-{{ splunk_universal_forwarder_version }}"
+    state: present
+
+
+
+
+- name: Copy Splunk deploymentclient.conf for system
+  template:
+    src: system_local.deploymentclient.j2
+    dest: "{{ splunk_uf_base }}/etc/system/local/deploymentclient.conf"
+    owner: splunk
+    group: splunk
+    mode: '0640'
+  when: use_deployment_server|default(False)
+  notify: "{{ notify_task }}"

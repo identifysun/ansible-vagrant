@@ -1,0 +1,4 @@
+---
+# handlers file for redis_exporter
+- name: Restart redis_exporter
+  systemd: name=prometheus state=restarted daemon_reload=yes

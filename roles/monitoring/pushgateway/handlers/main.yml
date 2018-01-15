@@ -1,0 +1,4 @@
+---
+# handlers file for pushgateway
+- name: Restart pushgateway
+  systemd: name=pushgateway state=restarted daemon_reload=yes

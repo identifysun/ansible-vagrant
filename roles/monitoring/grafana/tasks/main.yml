@@ -1,0 +1,13 @@
+---
+# tasks file for grafana
+- name: Install grafana package
+  yum:
+    name: "grafana-{{ grafana_version }}"
+    state: present
+
+- name: Enabled and started grafana-server service
+  systemd:
+    name: grafana-server
+    state: started
+    enabled: yes
+    daemon_reload: yes

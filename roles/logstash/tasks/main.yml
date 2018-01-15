@@ -1,0 +1,57 @@
+---
+- name: install logstash on guest os
+  yum:
+    name: logstash
+    state: present
+  tags:
+    - install
+
+- name: copy config file (logstash.yml) for logstash
+  copy: 
+    src: logstash.yml
+    dest: /etc/logstash/logstash.yml
+    mode: 0600
+  tags:
+    - config
+  notify:
+    - restart logstash
+
+- name: copy pipeline conf for logstash
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/logstash/conf.d"
+    owner: "root"
+    mode: 0600
+  with_fileglob:
+    - "conf.d/*.conf"
+  notify:
+    - restart logstash
+
+- name: mkdir logstash patterns
+  file:
+    path: /etc/logstash/patterns
+    state: directory
+    mode: 0755
+
+- name: copy patterns for logstash
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/logstash/patterns"
+    owner: "root"
+    mode: 0600
+  with_fileglob:
+    - "patterns/*"
+  notify:
+    - restart logstash
+
+- name: check logstash.service stats
+  stat:
+    path: /etc/systemd/system/logstash.service
+  register: logstash_service_stats
+
+- name: system-install command for install logstash service
+  shell: /usr/share/logstash/bin/system-install
+  when: logstash_service_stats.stat.exists == False
+
+- name: start logstash service
+  service: name=logstash state=started enabled=yes

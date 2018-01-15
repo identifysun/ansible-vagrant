@@ -1,0 +1,4 @@
+---
+# docker runtime
+- when: container_runtime == 'docker'
+  include_tasks: docker/main.yml

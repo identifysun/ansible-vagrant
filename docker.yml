@@ -1,0 +1,11 @@
+---
+# This playbook deploys the whole application stack in this site.
+- name: docker
+  hosts: docker
+  become: true
+  user: vagrant
+
+  # vars:
+
+  roles:
+    - docker

@@ -1,0 +1,65 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: kubeskoop-net-exporter
+  namespace: kubeskoop
+  labels:
+    app: kubeskoop-exporter
+spec:
+  selector:
+    matchLabels:
+      app: net-exporter
+  namespaceSelector:
+    any: true
+  podMetricsEndpoints:
+  - honorLabels: true
+    interval: 5s
+    relabelings:
+    - sourceLabels:
+      - '__meta_kubernetes_endpoints_name'
+      regex: 'net-exporter'
+      action: keep
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: kubeskoop-exporter
+  namespace: kubeskoop
+  labels:
+    app: kubeskoop-exporter
+spec:
+  selector:
+    matchLabels:
+      app: kubeskoop-exporter
+  namespaceSelector:
+    any: true
+  podMetricsEndpoints:
+  - honorLabels: true
+    interval: 5s
+    relabelings:
+    - action: keep
+      sourceLabels:
+      - __meta_kubernetes_pod_annotation_prometheus_io_scrape
+      regex: "true"
+    - action: replace
+      sourceLabels:
+      - __meta_kubernetes_pod_annotation_prometheus_io_path
+      targetLabel: __metrics_path__
+      regex: "(.+)"
+    - action: replace
+      sourceLabels:
+      - __address__
+      - __meta_kubernetes_pod_annotation_prometheus_io_port
+      targetLabel: __address__
+      regex: ([^:]+)(?::\d+)?;(\d+)
+      replacement: $1:$2
+    - action: labelmap
+      regex: __meta_kubernetes_pod_label_(.+)
+    - action: replace
+      sourceLabels:
+      - __meta_kubernetes_namespace
+      targetLabel: kubernetes_namespace
+    - action: replace
+      sourceLabels:
+      - __meta_kubernetes_pod_name
+      targetLabel: kubernetes_pod_name
